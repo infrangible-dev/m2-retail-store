@@ -59,6 +59,12 @@ class RetailStoreDemo
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
+        $apiKey = $this->storeHelper->getStoreConfig('infrangible_googlemaps/settings/api_key');
+
+        if (! $apiKey) {
+            throw new \Exception('No Google Maps API key');
+        }
+
         $retailStoreResource = $this->retailStoreResourceFactory->create();
 
         $retailStoreList = [['code' => 'munich',
@@ -371,7 +377,7 @@ class RetailStoreDemo
 </div>
 {{/if}}
 
-{{widget type="Infrangible\GoogleMaps\Block\Widget\GoogleMaps\SimpleMarker" api_key="AIzaSyDIML_isB24WGQ6GBpK9RSmkH5MUp_Dqt8" map_id="retail_store_id" height="500" lat="#var latitude#" lng="#var longitude#" title="#var name#" zoom="13" zoom_control="1" map_type_control="0" street_view_control="0" rotate_control="0" scale_control="0" fullscreen_control="0" administrative="1" landscape="0" poi="0" road="1" transit="1" water="1"}}']];
+{{widget type="Infrangible\GoogleMaps\Block\Widget\GoogleMaps\SimpleMarker" api_key="' . $apiKey . '" map_id="retail_store_id" height="500" lat="#var latitude#" lng="#var longitude#" title="#var name#" zoom="13" zoom_control="1" map_type_control="0" street_view_control="0" rotate_control="0" scale_control="0" fullscreen_control="0" administrative="1" landscape="0" poi="0" road="1" transit="1" water="1"}}']];
 
         $cmsBlockIds = [];
 
