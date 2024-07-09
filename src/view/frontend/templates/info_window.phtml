@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+use Infrangible\RetailStore\Block\Widget\GoogleMaps\InfoWindow;
+use Magento\Framework\View\TemplateEngine\Php;
+
+/**
+ * @author      Andreas Knollmann
+ * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ */
+
+/** @var Php $this */
+/** @var InfoWindow $block */
+
+$retailStore = $block->getRetailStore();
+?>
+
+<h3><?php echo $block->prepareData($retailStore->getName()); ?></h3>
+<div class="info-window-line info-window-address"><span class="label"><?php echo __('Address'); ?>:</span> <?php echo $block->prepareData($retailStore->getStreet()); ?>, <?php echo $block->prepareData($retailStore->getPostcode()); ?> <?php echo $block->prepareData($retailStore->getCity()); ?></div>
+<div class="info-window-line info-window-phone"><span class="label"><?php echo __('Phone Number'); ?>:</span> <?php echo $block->prepareData($retailStore->getPhoneNumber()); ?></div>
+<div class="info-window-line info-window-mail"><span class="label"><?php echo __('E-Mail'); ?>:</span> <?php echo $block->prepareData($retailStore->getEmail()); ?></div>
+<div class="info-window-line info-window-opening-hours"><span class="label"><?php echo __('Opening Hours'); ?>:</span> <?php echo $block->prepareData($retailStore->getOpeningHours()); ?></div>
+<div class="info-window-link"><a href="<?php echo $retailStore->getUrl(); ?>" class="action primary"><?php echo __('Store Detail Page'); ?></a></div>

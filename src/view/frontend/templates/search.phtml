@@ -1,0 +1,79 @@
+<?php
+
+declare(strict_types=1);
+
+use Infrangible\RetailStore\Block\Widget\GoogleMaps\Search;
+use Magento\Framework\View\TemplateEngine\Php;
+
+/**
+ * @author      Andreas Knollmann
+ * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ */
+
+/** @var Php $this */
+/** @var Search $block */
+?>
+
+<form name="retail-store-search" id="retail-store-search" action="<?php echo $block->getUrl('retail_store/store/search'); ?>" method="POST">
+    <div class="retail-store-search-bar">
+        <input name="result_block_id" type="hidden" value="<?php echo $block->getResultBlockId(); ?>">
+        <input name="no_result_block_id" type="hidden" value="<?php echo $block->getNoResultBlockId(); ?>">
+
+        <div class="location">
+            <?php echo $block->getLocationInput(); ?>
+        </div>
+
+        <div class="radius">
+            <label for="max_distance"><?php echo __('Radius'); ?>:</label>
+            <select id="max_distance" name="max_distance">
+                <?php foreach ($block->getDistances() as $distance => $label): ?>
+                    <option value="<?php echo $distance; ?>" <?php if ($distance == $block->getMaxDistanceValue()): ?>selected<?php endif; ?>><?php echo $label; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="buttons">
+            <button name="location-search" id="location-search" type="submit" class="action primary">
+                <span><?php echo __('Search Retail Store'); ?></span>
+            </button>
+
+            <button name="determine-location" id="determine-location" type="button">
+                <span><?php echo __('Determine location'); ?></span>
+            </button>
+        </div>
+    </div>
+</form>
+
+<!--suppress JSUnresolvedVariable, JSUnresolvedFunction -->
+<script type="text/javascript">
+    document.addEventListener("google-maps-api", function() {
+        var locationButton = document.getElementById('determine-location');
+
+        locationButton.addEventListener("click", () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        var location = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+
+                        var geocoder = new google.maps.Geocoder();
+                        geocoder.geocode({location: location}).then((response) => {
+                            if (response.results[0]) {
+                                document.getElementById('location').value = response.results[0].formatted_address;
+                            } else {
+                                window.alert("No results found");
+                            }
+                        }).catch((e) => window.alert("Geocoder failed due to: " + e));
+                    }, () => {
+                        window.alert('Could not determine location');
+                    }
+                );
+            } else {
+                window.alert('Browser does not support location determination');
+            }
+        });
+    });
+</script>

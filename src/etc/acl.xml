@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+<!--
+ * @author      Andreas Knollmann
+ * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Infrangible_RetailStore::config_infrangible_retailstore" title="Retail Store" translate="title" sortOrder="820"/>
+                        </resource>
+                    </resource>
+                </resource>
+                <resource id="Infrangible_RetailStore::infrangible_retailstore" title="Retail Store" sortOrder="820">
+                    <resource id="Infrangible_RetailStore::infrangible_retailstore_manage" title="Manage Stores" sortOrder="10"/>
+                    <resource id="Infrangible_RetailStore::infrangible_retailstore_feature" title="Manage Features" sortOrder="20"/>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<!--
+ * @author      Andreas Knollmann
+ * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Infrangible_RetailStore::infrangible_retailstore" title="Retail Store" module="Infrangible_RetailStore" sortOrder="820" resource="Infrangible_RetailStore::infrangible_retailstore" parent="Infrangible_Foundation::menu"/>
+        <add id="Infrangible_RetailStore::infrangible_retailstore_manage" title="Manage Retail Stores" module="Infrangible_RetailStore" sortOrder="10" resource="Infrangible_RetailStore::infrangible_retailstore_manage" action="retailstore/store/index" parent="Infrangible_RetailStore::infrangible_retailstore"/>
+        <add id="Infrangible_RetailStore::infrangible_retailstore_feature" title="Manage Features" module="Infrangible_RetailStore" sortOrder="20" resource="Infrangible_RetailStore::infrangible_retailstore_feature" action="retailstore/feature/index" parent="Infrangible_RetailStore::infrangible_retailstore"/>
+    </menu>
+</config>

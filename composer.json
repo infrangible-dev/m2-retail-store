@@ -1,0 +1,34 @@
+{
+    "name": "infrangible/m2-retail-store",
+    "description": "Infrangible Magento 2 Retail Store",
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": "MIT",
+    "keywords": [
+        "Magento"
+    ],
+    "homepage": "https://github.com/infrangible-dev/m2-retail-store",
+    "authors": [
+        {
+            "name": "Andreas Knollmann",
+            "email": "a.knollmann@seak.dev",
+            "homepage": "https://www.seak.dev",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "magento/framework": "~102.3.5|~103.0.0",
+        "infrangible/m2-backend-widget": "~2.2",
+        "infrangible/m2-core": ">=2.3",
+        "infrangible/m2-google-maps": "~1.0"
+    },
+    "autoload": {
+        "files": [
+            "src/registration.php"
+        ],
+        "psr-4": {
+            "Infrangible\\RetailStore\\": "src"
+        }
+    }
+}

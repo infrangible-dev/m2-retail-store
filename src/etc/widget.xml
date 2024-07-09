@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+
+<!--
+ * @author      Andreas Knollmann
+ * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+-->
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget class="Infrangible\RetailStore\Block\Widget\GoogleMaps\Search" id="retail_store_search">
+        <label>Retails Stores Search</label>
+        <description>Adds a search bar with Google Maps Autocomplete.</description>
+        <parameters>
+            <parameter name="result_block_id" sort_order="10" visible="true" required="true" xsi:type="select" source_model="Infrangible\Core\Model\Config\Source\CmsBlock">
+                <label>Result CMS Block</label>
+            </parameter>
+            <parameter name="no_result_block_id" sort_order="20" visible="true" required="true" xsi:type="select" source_model="Infrangible\Core\Model\Config\Source\CmsBlock">
+                <label>No Result CMS Block</label>
+            </parameter>
+        </parameters>
+    </widget>
+    <widget class="Infrangible\RetailStore\Block\Widget\GoogleMaps\Stores" id="retail_store_maps_stores">
+        <label>Retails Stores Map</label>
+        <description>Add a Google map with all active retail stores as marker.</description>
+        <parameters>
+            <parameter name="map_id" sort_order="10" visible="true" required="true" xsi:type="text">
+                <label>Map Id</label>
+            </parameter>
+            <parameter name="width" sort_order="100" visible="true" required="false" xsi:type="text">
+                <label>Width</label>
+                <description>The width of the map in pixels. If left empty no width will be set.</description>
+            </parameter>
+            <parameter name="height" sort_order="110" visible="true" required="false" xsi:type="text">
+                <label>Height</label>
+                <description>The height of the map in pixels. If left empty no height will be set.</description>
+            </parameter>
+            <parameter name="zoom" sort_order="120" visible="true" required="false" xsi:type="text">
+                <label>Zoom</label>
+            </parameter>
+            <parameter name="zoom_control" sort_order="200" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Zoom Control</label>
+            </parameter>
+            <parameter name="map_type_control" sort_order="210" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Map Type Control</label>
+            </parameter>
+            <parameter name="street_view_control" sort_order="220" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Street View Control</label>
+            </parameter>
+            <parameter name="rotate_control" sort_order="230" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Rotate Control</label>
+            </parameter>
+            <parameter name="scale_control" sort_order="240" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Scale Control</label>
+            </parameter>
+            <parameter name="fullscreen_control" sort_order="250" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Fullscreen Control</label>
+            </parameter>
+            <parameter name="administrative" sort_order="300" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Styles: Administrative Areas</label>
+            </parameter>
+            <parameter name="landscape" sort_order="310" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Styles: Landscapes</label>
+            </parameter>
+            <parameter name="poi" sort_order="320" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Styles: Points of Interest</label>
+            </parameter>
+            <parameter name="road" sort_order="330" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Styles: Roads</label>
+            </parameter>
+            <parameter name="transit" sort_order="340" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Styles: Transit Stations and Lines</label>
+            </parameter>
+            <parameter name="water" sort_order="350" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Styles: Bodies of Water</label>
+            </parameter>
+        </parameters>
+    </widget>
+    <widget class="Infrangible\RetailStore\Block\Widget\GoogleMaps\Radius" id="retail_store_maps_radius">
+        <label>Retails Stores Map within Radius</label>
+        <description>Add a Google map with all active retail stores within a radius as marker.</description>
+        <parameters>
+            <parameter name="header_block_id" sort_order="10" visible="true" required="true" xsi:type="select" source_model="Infrangible\Core\Model\Config\Source\CmsBlock">
+                <label>Header CMS Block</label>
+            </parameter>
+            <parameter name="map_id" sort_order="20" visible="true" required="true" xsi:type="text">
+                <label>Map Id</label>
+            </parameter>
+            <parameter name="lat" sort_order="30" visible="true" required="true" xsi:type="text">
+                <label>Latitude of Center</label>
+            </parameter>
+            <parameter name="lng" sort_order="31" visible="true" required="true" xsi:type="text">
+                <label>Longitude of Center</label>
+            </parameter>
+            <parameter name="max_distance" sort_order="40" visible="true" required="true" xsi:type="text">
+                <label>Max Distance in km</label>
+            </parameter>
+            <parameter name="width" sort_order="100" visible="true" required="false" xsi:type="text">
+                <label>Width</label>
+                <description>The width of the map in pixels. If left empty no width will be set.</description>
+            </parameter>
+            <parameter name="height" sort_order="110" visible="true" required="false" xsi:type="text">
+                <label>Height</label>
+                <description>The height of the map in pixels. If left empty no height will be set.</description>
+            </parameter>
+            <parameter name="zoom" sort_order="120" visible="true" required="false" xsi:type="text">
+                <label>Zoom</label>
+            </parameter>
+            <parameter name="zoom_control" sort_order="200" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Zoom Control</label>
+            </parameter>
+            <parameter name="map_type_control" sort_order="210" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Map Type Control</label>
+            </parameter>
+            <parameter name="street_view_control" sort_order="220" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Street View Control</label>
+            </parameter>
+            <parameter name="rotate_control" sort_order="230" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Rotate Control</label>
+            </parameter>
+            <parameter name="scale_control" sort_order="240" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Scale Control</label>
+            </parameter>
+            <parameter name="fullscreen_control" sort_order="250" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Fullscreen Control</label>
+            </parameter>
+            <parameter name="administrative" sort_order="300" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Styles: Administrative Areas</label>
+            </parameter>
+            <parameter name="landscape" sort_order="310" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Styles: Landscapes</label>
+            </parameter>
+            <parameter name="poi" sort_order="320" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Styles: Points of Interest</label>
+            </parameter>
+            <parameter name="road" sort_order="330" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Styles: Roads</label>
+            </parameter>
+            <parameter name="transit" sort_order="340" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Styles: Transit Stations and Lines</label>
+            </parameter>
+            <parameter name="water" sort_order="350" visible="true" required="false" xsi:type="select" source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label>Styles: Bodies of Water</label>
+            </parameter>
+            <parameter name="result_block_id" sort_order="401" visible="true" required="true" xsi:type="select" source_model="Infrangible\Core\Model\Config\Source\CmsBlock">
+                <label>Result CMS Block</label>
+            </parameter>
+            <parameter name="footer_block_id" sort_order="402" visible="true" required="true" xsi:type="select" source_model="Infrangible\Core\Model\Config\Source\CmsBlock">
+                <label>Footer CMS Block</label>
+            </parameter>
+        </parameters>
+    </widget>
+</widgets>

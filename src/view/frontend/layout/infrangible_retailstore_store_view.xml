@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * @author      Andreas Knollmann
+ * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Infrangible\RetailStore\Block\Store" name="retail_store" template="Infrangible_RetailStore::store.phtml">
+                <container name="retail_store_before"/>
+                <container name="retail_store_after"/>
+            </block>
+        </referenceContainer>
+    </body>
+</page>
