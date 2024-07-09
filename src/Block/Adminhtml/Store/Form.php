@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Infrangible\RetailStore\Block\Adminhtml\Store;
 
 use FeWeDev\Base\Arrays;
+use Infrangible\RetailStore\Model\Config\Source\RetailStoreNoteType;
 use Infrangible\RetailStore\Model\Entity\Attribute\Source\Feature;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\Data\FormFactory;
@@ -21,6 +22,9 @@ class Form
     /** @var Feature */
     protected $sourceFeature;
 
+    /** @var RetailStoreNoteType */
+    protected $sourceNoteType;
+
     public function __construct(
         Context $context,
         Registry $registry,
@@ -29,11 +33,13 @@ class Form
         \Infrangible\Core\Helper\Registry $registryHelper,
         \Infrangible\BackendWidget\Helper\Form $formHelper,
         Feature $sourceFeature,
+        RetailStoreNoteType $sourceNoteType,
         array $data = [])
     {
         parent::__construct($context, $registry, $formFactory, $arrays, $registryHelper, $formHelper, $data);
 
         $this->sourceFeature = $sourceFeature;
+        $this->sourceNoteType = $sourceNoteType;
     }
 
     protected function prepareFields(\Magento\Framework\Data\Form $form)
@@ -79,6 +85,9 @@ class Form
         $this->addCmsBlockSelectField($frontendFieldSet, 'cms_block_id', __('Template')->render(), null, true);
         $this->addTextField($frontendFieldSet, 'url_key', __('URL Key')->render(), true);
         $this->addEditorField($frontendFieldSet, 'seo_text', __('SEO Text')->render());
+        $this->addTextField($frontendFieldSet, 'note', __('Note')->render());
+        $this->addOptionsField($frontendFieldSet, 'note_type', __('Note Type')->render(),
+            $this->sourceNoteType->toOptionArray(), 'none');
 
         $featuresFieldSet = $form->addFieldset('features', ['legend' => __('Features')]);
 

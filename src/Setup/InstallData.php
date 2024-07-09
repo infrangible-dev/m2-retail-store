@@ -7,6 +7,7 @@ namespace Infrangible\RetailStore\Setup;
 use FeWeDev\Base\Arrays;
 use Infrangible\Core\Helper\Setup;
 use Infrangible\RetailStore\Helper\Data;
+use Infrangible\RetailStore\Model\Config\Source\RetailStoreNoteType;
 use Infrangible\RetailStore\Model\Entity\Attribute\Source\ClickAndCollectType;
 use Infrangible\RetailStore\Model\Entity\Attribute\Source\CmsBlock;
 use Infrangible\RetailStore\Model\Entity\Attribute\Source\Feature;
@@ -151,11 +152,12 @@ class InstallData
             ClickAndCollectType::class);
         $this->retailStoreHelper->addAttribute($setup, 'pickup_point_desc', 'Retail Store Pickup Point Description',
             'text', 'textarea', null, 210, false, false, true, true);
-        $this->retailStoreHelper->addAttribute($setup, 'url_key', 'URL Key', 'varchar', 'text', null, 220, false,
-            true);
-        $this->retailStoreHelper->addAttribute($setup, 'seo_text', 'SEO Text', 'text', 'text', null, 230, false,
-            true);
-        $this->retailStoreHelper->addAttribute($setup, 'cms_block_id', 'CMS Block', 'int', 'select', null, 240,
-            false, true, true, false, null, CmsBlock::class);
+        $this->retailStoreHelper->addAttribute($setup, 'url_key', 'URL Key', 'varchar', 'text', null, 220, false, true);
+        $this->retailStoreHelper->addAttribute($setup, 'seo_text', 'SEO Text', 'text', 'text', null, 230, false, true);
+        $this->retailStoreHelper->addAttribute($setup, 'cms_block_id', 'CMS Block', 'int', 'select', null, 240, false,
+            true, true, false, null, CmsBlock::class);
+        $this->retailStoreHelper->addAttribute($setup, 'note', 'Retail Store Note', 'varchar', 'text', null, 300);
+        $this->retailStoreHelper->addAttribute($setup, 'note_type', 'Retail Store Note Type', 'int', 'select', null,
+            301, false, false, true, false, null, RetailStoreNoteType::class);
     }
 }
