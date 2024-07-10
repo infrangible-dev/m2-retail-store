@@ -12,23 +12,14 @@
             <label>Retail Store</label>
             <tab>infrangible</tab>
             <resource>Infrangible_RetailStore::config_infrangible_retailstore</resource>
-            <group id="google_api" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Google API</label>
-                <field id="use_maps_key" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Use Maps key</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="api_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>API Key</label>
-                    <depends>
-                        <field id="use_maps_key">0</field>
-                    </depends>
-                </field>
-            </group>
             <group id="store" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Retail Store</label>
                 <field id="cms_block_id" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>CMS Block</label>
+                    <source_model>Infrangible\RetailStore\Model\Entity\Attribute\Source\CmsBlock</source_model>
+                </field>
+                <field id="info_window_cms_block_id" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Info Window CMS Block</label>
                     <source_model>Infrangible\RetailStore\Model\Entity\Attribute\Source\CmsBlock</source_model>
                 </field>
             </group>

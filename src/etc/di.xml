@@ -9,7 +9,8 @@
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="infrangible_retailstore_demo" xsi:type="object">Infrangible\RetailStore\Console\Command\RetailStoreDemo</item>
+                <item name="infrangible_retailstore_demo_content" xsi:type="object">Infrangible\RetailStore\Console\Command\RetailStoreDemoContent</item>
+                <item name="infrangible_retailstore_demo_data" xsi:type="object">Infrangible\RetailStore\Console\Command\RetailStoreDemoData</item>
             </argument>
         </arguments>
     </type>

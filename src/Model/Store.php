@@ -13,7 +13,6 @@ use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
-use Zend_Date;
 
 /**
  * @author      Andreas Knollmann
@@ -153,10 +152,10 @@ class Store
     public function beforeSave(): AbstractModel
     {
         if ($this->isObjectNew()) {
-            $this->setCreatedAt(Zend_Date::now()->__toString());
+            $this->setCreatedAt(gmdate('Y-m-d H:i:s'));
         }
 
-        $this->setUpdatedAt(Zend_Date::now()->__toString());
+        $this->setUpdatedAt(gmdate('Y-m-d H:i:s'));
 
         return parent::beforeSave();
     }

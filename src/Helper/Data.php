@@ -9,19 +9,14 @@ use FeWeDev\Base\Arrays;
 use FeWeDev\Base\Json;
 use FeWeDev\Base\Variables;
 use Infrangible\Core\Helper\Cms;
-use Infrangible\Core\Helper\Setup;
-use Infrangible\RetailStore\Block\Widget\GoogleMaps\InfoWindow;
+use Infrangible\Core\Helper\Stores;
 use Infrangible\RetailStore\Model\ResourceModel\Store\CollectionFactory;
 use Infrangible\RetailStore\Model\Store;
 use Infrangible\RetailStore\Model\Template\Filter;
 use Magento\Eav\Model\Config;
-use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
-use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Setup\SetupInterface;
-use Magento\Framework\View\LayoutInterface;
 
 /**
  * @author      Andreas Knollmann
@@ -43,9 +38,6 @@ class Data
     /** @var Cms */
     protected $cmsHelper;
 
-    /** @var EavSetupFactory */
-    protected $eavSetupFactory;
-
     /** @var CollectionFactory */
     protected $retailStoreCollectionFactory;
 
@@ -55,8 +47,8 @@ class Data
     /** @var Filter */
     protected $filter;
 
-    /** @var Setup */
-    protected $setupHelper;
+    /** @var Stores */
+    protected $storeHelper;
 
     /** @var string[] */
     private $attributeCodes;
@@ -66,12 +58,11 @@ class Data
         Variables $variables,
         Json $json,
         Cms $cmsHelper,
-        EavSetupFactory $eavSetupFactory,
         Context $context,
         CollectionFactory $retailStoreCollectionFactory,
         Config $eavConfig,
         Filter $filter,
-        Setup $setupHelper)
+        Stores $storeHelper)
     {
         parent::__construct($context);
 
@@ -79,53 +70,12 @@ class Data
         $this->variables = $variables;
         $this->json = $json;
         $this->cmsHelper = $cmsHelper;
-        $this->eavSetupFactory = $eavSetupFactory;
         $this->retailStoreCollectionFactory = $retailStoreCollectionFactory;
         $this->eavConfig = $eavConfig;
         $this->filter = $filter;
-        $this->setupHelper = $setupHelper;
+        $this->storeHelper = $storeHelper;
     }
 
-    /**
-     * @param SetupInterface $setup
-     * @param string $attributeCode
-     * @param string $label
-     * @param string $type
-     * @param string $input
-     * @param string|null $default
-     * @param int $sortOrder
-     * @param bool $userDefined
-     * @param bool $required
-     * @param bool $visible
-     * @param bool $visibleOnFront
-     * @param string|null $backendModel
-     * @param string|null $sourceModel
-     *
-     * @throws Exception
-     */
-    public function addAttribute(
-        SetupInterface $setup,
-        string $attributeCode,
-        string $label,
-        string $type,
-        string $input,
-        ?string $default = null,
-        int $sortOrder = 10,
-        bool $userDefined = false,
-        bool $required = false,
-        bool $visible = true,
-        bool $visibleOnFront = false,
-        string $backendModel = null,
-        string $sourceModel = null)
-    {
-        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
-
-        $this->setupHelper->addEavEntityAttribute($eavSetup, 'retail_store', $attributeCode, $label,
-            ScopedAttributeInterface::SCOPE_GLOBAL, $type, $input, $sortOrder, $default, $userDefined, $required, false,
-            false, false, false, $visible, $visibleOnFront, false, $backendModel, $sourceModel);
-
-        $this->setupHelper->addAttributeToSetAndGroup($eavSetup, 'retail_store', $attributeCode, 'Default', 'Default');
-    }
 
     public function loadRetailStoreWithKey(string $urlKey): ?Store
     {
@@ -212,12 +162,12 @@ class Data
         return $retailStoresData;
     }
 
-    public function getMarkerJson(LayoutInterface $layout, array $retailStores): string
+    public function getMarkerJson(array $retailStores): string
     {
         $markerData = [];
 
         foreach ($retailStores as $retailStore) {
-            $infoWindowContent = $this->getInfoWindowContent($layout, $retailStore);
+            $infoWindowContent = $this->getInfoWindowContent($retailStore);
             $infoWindowContent = preg_replace('/\r/', '', $infoWindowContent);
             $infoWindowContent = preg_replace('/\n/', '', $infoWindowContent);
 
@@ -230,7 +180,7 @@ class Data
         return str_replace('{', '<<<', str_replace('}', '>>>', $this->json->encode($markerData)));
     }
 
-    public function getResultBlockOutput(LayoutInterface $layout, array $retailStores, int $cmsBlockId): ?string
+    public function getResultBlockOutput(array $retailStores, int $cmsBlockId): ?string
     {
         $cmsBlock = $this->cmsHelper->loadCmsBlock($cmsBlockId);
 
@@ -238,8 +188,15 @@ class Data
 
         $this->filter->setVariables(['retail_stores' => $this->getRetailStoresData($retailStores)]);
 
-        $this->filter->setVariables(['marker_json' => addslashes(htmlspecialchars($this->getMarkerJson($layout,
-            $retailStores)))]);
+        try {
+            $markerJson = addslashes(htmlspecialchars($this->getMarkerJson($retailStores)));
+        } catch (Exception $exception) {
+            $this->_logger->error($exception);
+
+            $markerJson = '';
+        }
+
+        $this->filter->setVariables(['marker_json' => $markerJson]);
 
         try {
             return $this->filter->filter($content);
@@ -250,13 +207,22 @@ class Data
         }
     }
 
-    public function getInfoWindowContent(LayoutInterface $layout, Store $retailStore): string
+    public function getInfoWindowContent(Store $retailStore): string
     {
-        /** @var InfoWindow $infoWindow */
-        $infoWindow = $layout->createBlock(InfoWindow::class);
+        $cmsBlockId = $this->storeHelper->getStoreConfig('infrangible_retailstore/store/info_window_cms_block_id');
 
-        $infoWindow->setRetailStore($retailStore);
+        $cmsBlock = $this->cmsHelper->loadCmsBlock((int)$cmsBlockId);
 
-        return $infoWindow->toHtml();
+        $content = $cmsBlock->getContent();
+
+        $this->filter->setVariables($this->getRetailStoreData($retailStore));
+
+        try {
+            return $this->filter->filter($content);
+        } catch (Exception $exception) {
+            $this->_logger->error($exception);
+
+            return '';
+        }
     }
 }

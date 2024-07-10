@@ -8,7 +8,6 @@ use FeWeDev\Base\Variables;
 use Infrangible\Core\Helper\Registry;
 use Infrangible\RetailStore\Helper\Data;
 use Infrangible\RetailStore\Model\Store;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Element\Template;
 
 /**
@@ -55,8 +54,8 @@ class Search
             }
 
             try {
-                return $this->retailStoreHelper->getResultBlockOutput($this->getLayout(), [], (int)$noResultBlockId);
-            } catch (LocalizedException $exception) {
+                return $this->retailStoreHelper->getResultBlockOutput([], (int)$noResultBlockId);
+            } catch (\Exception $exception) {
                 return '';
             }
         } else {
@@ -67,9 +66,8 @@ class Search
             }
 
             try {
-                return $this->retailStoreHelper->getResultBlockOutput($this->getLayout(), $retailStores,
-                    (int)$resultBlockId);
-            } catch (LocalizedException $exception) {
+                return $this->retailStoreHelper->getResultBlockOutput($retailStores, (int)$resultBlockId);
+            } catch (\Exception $exception) {
                 return '';
             }
         }

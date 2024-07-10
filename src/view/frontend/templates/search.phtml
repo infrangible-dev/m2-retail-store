@@ -16,6 +16,7 @@ use Magento\Framework\View\TemplateEngine\Php;
 ?>
 
 <form name="retail-store-search" id="retail-store-search" action="<?php echo $block->getUrl('retail_store/store/search'); ?>" method="POST">
+    <input type="hidden" name="form_key" value="<?php echo $block->getFormKey(); ?>">
     <div class="retail-store-search-bar">
         <input name="result_block_id" type="hidden" value="<?php echo $block->getResultBlockId(); ?>">
         <input name="no_result_block_id" type="hidden" value="<?php echo $block->getNoResultBlockId(); ?>">

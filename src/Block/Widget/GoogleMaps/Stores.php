@@ -10,7 +10,6 @@ use FeWeDev\Base\Variables;
 use Infrangible\Core\Helper\Registry;
 use Infrangible\GoogleMaps\Block\Widget\GoogleMaps\JsonMarker;
 use Infrangible\RetailStore\Helper\Data;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Element\Template;
 
 /**
@@ -42,9 +41,9 @@ class Stores
     {
         try {
             return str_replace('<<<', '{', str_replace('>>>', '}',
-                $this->retailStoreHelper->getMarkerJson($this->getLayout(),
-                    $this->retailStoreHelper->loadActiveRetailStores())));
-        } catch (LocalizedException $exception) {
+                $this->retailStoreHelper->getMarkerJson($this->retailStoreHelper->loadActiveRetailStores())));
+        } catch (\Exception $exception) {
+            $this->_logger->error($exception->getMessage());
             return '';
         }
     }

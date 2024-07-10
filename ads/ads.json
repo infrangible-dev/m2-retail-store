@@ -12,7 +12,7 @@
     "ws": {
         "webServerType": "apache_php",
         "webServerVersion": "2.4",
-        "phpVersion": "7.4",
+        "phpVersion": "8.2",
         "containerVolumes": [
             "../src:/var/www/magento/htdocs/app/code/Infrangible/RetailStore:www-data"
         ]
@@ -22,13 +22,13 @@
         "databaseVersion": "5.7"
     },
     "es": {
-        "elasticsearchVersion": "6.8"
+        "elasticsearchVersion": "7.9"
     },
     "mc": {
         "mailCatcherVersion": "0.6"
     },
     "ms": {
-        "magentoVersion": "2.3.7",
+        "magentoVersion": "2.4.6-p3",
         "magentoEdition": "community"
     }
 }

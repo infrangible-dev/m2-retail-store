@@ -102,9 +102,10 @@ class Radius
     public function getMarkerJson(): string
     {
         try {
-            return str_replace('<<<', '{', str_replace('>>>', '}',
-                $this->retailStoreHelper->getMarkerJson($this->getLayout(), $this->getRetailStores())));
-        } catch (LocalizedException $exception) {
+            return str_replace('<<<', '{',
+                str_replace('>>>', '}', $this->retailStoreHelper->getMarkerJson($this->getRetailStores())));
+        } catch (\Exception $exception) {
+            $this->_logger->error($exception->getMessage());
             return '';
         }
     }
@@ -128,17 +129,17 @@ class Radius
     protected function _toHtml(): string
     {
         try {
-            $html = $this->retailStoreHelper->getResultBlockOutput($this->getLayout(), $this->getRetailStores(),
-                $this->getHeaderBlockId());
+            $html = $this->retailStoreHelper->getResultBlockOutput($this->getRetailStores(), $this->getHeaderBlockId());
 
             $html .= parent::_toHtml();
 
-            $html .= $this->retailStoreHelper->getResultBlockOutput($this->getLayout(), $this->getRetailStores(),
+            $html .= $this->retailStoreHelper->getResultBlockOutput($this->getRetailStores(),
                 $this->getResultBlockId());
 
-            $html .= $this->retailStoreHelper->getResultBlockOutput($this->getLayout(), $this->getRetailStores(),
+            $html .= $this->retailStoreHelper->getResultBlockOutput($this->getRetailStores(),
                 $this->getFooterBlockId());
-        } catch (LocalizedException $exception) {
+        } catch (\Exception $exception) {
+            $this->_logger->error($exception->getMessage());
             $html = '';
         }
 
