@@ -73,7 +73,7 @@ class Router
                     $request->setModuleName('retail_store');
                     $request->setControllerName('store');
                     $request->setActionName('view');
-                    $request->setParam('store_id', $retailStore->getId());
+                    $request->setParam('retail_store_id', $retailStore->getId());
                     $request->setAlias(UrlInterface::REWRITE_REQUEST_PATH_ALIAS, $identifier);
 
                     return $this->actionFactory->create(Forward::class);

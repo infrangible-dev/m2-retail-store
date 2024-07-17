@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpDeprecationInspection */
 
 declare(strict_types=1);
 
@@ -67,7 +67,7 @@ class View
      */
     public function execute()
     {
-        $storeId = $this->getRequest()->getParam('store_id');
+        $storeId = $this->getRequest()->getParam('retail_store_id');
 
         if (!$storeId) {
             $this->_forward('noRoute');
