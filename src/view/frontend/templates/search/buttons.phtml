@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+use Infrangible\RetailStore\Block\Widget\GoogleMaps\Search\Buttons;
+use Magento\Framework\View\TemplateEngine\Php;
+
+/** @var Php $this */
+/** @var Buttons $block */
+?>
+
+<button name="location-search" id="location-search" type="submit" class="action primary">
+    <span><?php echo __('Search Retail Store'); ?></span>
+</button>
+
+<button name="determine-location" id="determine-location" type="button">
+    <span><?php echo __('Determine location'); ?></span>
+</button>

@@ -87,7 +87,7 @@ class RetailStoreDemoContent
       </div>
       {{/fif}}
       <div class="info-window-link">
-        <a href="{{var retail_store.url}}" class="action primary">#trans "Store Detail Page"#</a>
+        <a href="{{var retail_store.url}}" class="action primary btn btn-primary">#trans "Store Detail Page"#</a>
       </div>
     </div>
   {{/for}}
@@ -135,7 +135,7 @@ class RetailStoreDemoContent
 {{if has_opening_hours_special}}
 <div class="info-window-line info-window-opening-hours"><span class="label">#trans "Opening Hours"#:</span> {{var opening_hours}}</div>
 {{/if}}
-<div class="info-window-link"><a href="{{var url}}" class="action primary">#trans "Store Detail Page"#</a></div>']];
+<div class="info-window-link"><a href="{{var url}}" class="action primary btn btn-primary">#trans "Store Detail Page"#</a></div>']];
 
         $cmsBlockIds = [];
 

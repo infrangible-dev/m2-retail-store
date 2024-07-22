@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Infrangible\RetailStore\Block\Widget\GoogleMaps;
 
 use Infrangible\GoogleMaps\Block\Widget\GoogleMaps\Autocomplete;
+use Infrangible\RetailStore\Block\Widget\GoogleMaps\Search\Buttons;
 use Magento\Framework\App\Response\Http;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Data\Form\FormKey;
@@ -28,10 +29,10 @@ class Search
     protected $response;
 
     public function __construct(
-        Template\Context $context,
-        FormKey $formKey,
+        Template\Context  $context,
+        FormKey           $formKey,
         ResponseInterface $response,
-        array $data = [])
+        array             $data = [])
     {
         parent::__construct($context, $data);
 
@@ -104,6 +105,19 @@ class Search
         try {
             return $this->formKey->getFormKey();
         } catch (LocalizedException $exception) {
+            return '';
+        }
+    }
+
+    public function getButtonsHtml(): string
+    {
+        try {
+            $block = $this->getLayout()->createBlock(Buttons::class);
+
+            return $block->toHtml();
+        } catch (LocalizedException $exception) {
+            $this->_logger->error($exception);
+
             return '';
         }
     }

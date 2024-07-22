@@ -2,7 +2,7 @@
     "name": "infrangible/m2-retail-store",
     "description": "Infrangible Magento 2 Retail Store",
     "type": "magento2-module",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "license": "MIT",
     "keywords": [
         "Magento"
