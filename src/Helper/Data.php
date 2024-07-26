@@ -168,6 +168,7 @@ class Data
 
         foreach ($retailStores as $retailStore) {
             $infoWindowContent = $this->getInfoWindowContent($retailStore);
+            $infoWindowContent = preg_replace('/\t/', '', $infoWindowContent);
             $infoWindowContent = preg_replace('/\r/', '', $infoWindowContent);
             $infoWindowContent = preg_replace('/\n/', '', $infoWindowContent);
 
