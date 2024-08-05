@@ -82,7 +82,7 @@ class Form
 
         $frontendFieldSet = $form->addFieldset('frontend', ['legend' => __('Frontend')]);
 
-        $this->addCmsBlockSelectField($frontendFieldSet, 'cms_block_id', __('Template')->render(), null, true);
+        $this->addCmsBlockSelectField($frontendFieldSet, 'cms_block_id', __('Template')->render());
         $this->addTextField($frontendFieldSet, 'url_key', __('URL Key')->render(), true);
         $this->addEditorField($frontendFieldSet, 'seo_text', __('SEO Text')->render());
         $this->addTextField($frontendFieldSet, 'note', __('Note')->render());

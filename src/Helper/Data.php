@@ -12,11 +12,11 @@ use Infrangible\Core\Helper\Cms;
 use Infrangible\Core\Helper\Stores;
 use Infrangible\RetailStore\Model\ResourceModel\Store\CollectionFactory;
 use Infrangible\RetailStore\Model\Store;
-use Infrangible\RetailStore\Model\Template\Filter;
 use Magento\Eav\Model\Config;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Widget\Model\Template\Filter;
 
 /**
  * @author      Andreas Knollmann

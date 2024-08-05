@@ -82,7 +82,7 @@ class RetailStoreDemoContent
       {{/fif}}
       {{fif retail_store.has_opening_hours_special}}
       <div class="info-window-line info-window-opening-hours">
-        <span class="label">#trans ""Special Opening Hours""#:</span>
+        <span class="label">#trans "Special Opening Hours"#:</span>
         {{var retail_store.opening_hours_special}}
       </div>
       {{/fif}}
@@ -119,7 +119,7 @@ class RetailStoreDemoContent
 {{/if}}
 {{if has_opening_hours_special}}
 <div class="info-window-line info-window-opening-hours">
-  <span class="label">#trans ""Special Opening Hours""#:</span>
+  <span class="label">#trans "Special Opening Hours"#:</span>
   {{var opening_hours_special}}
 </div>
 {{/if}}

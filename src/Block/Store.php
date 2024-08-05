@@ -11,9 +11,9 @@ use Infrangible\Core\Helper\Registry;
 use Infrangible\Core\Helper\Stores;
 use Infrangible\RetailStore\Helper\Data;
 use Infrangible\RetailStore\Helper\Search;
-use Infrangible\RetailStore\Model\Template\Filter;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Element\Template;
+use Magento\Widget\Model\Template\Filter;
 
 /**
  * @author      Andreas Knollmann
@@ -87,8 +87,10 @@ class Store
 
         try {
             $nearbyStores =
-                $this->retailStoreSearchHelper->searchRetailStoresWithCoordinates(floatval($retailStore->getLatitude()),
-                    floatval($retailStore->getLongitude()), 4);
+                $this->retailStoreSearchHelper->searchRetailStoresWithCoordinates(
+                    floatval($retailStore->getLatitude()),
+                    floatval($retailStore->getLongitude()),
+                    4);
 
             array_shift($nearbyStores);
 
