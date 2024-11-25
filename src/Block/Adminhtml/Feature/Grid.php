@@ -15,20 +15,14 @@ use Magento\Framework\Data\Collection\AbstractDb;
 class Grid
     extends \Infrangible\BackendWidget\Block\Grid
 {
-    /**
-     * @param AbstractDb $collection
-     *
-     * @return void
-     */
-    protected function prepareCollection(AbstractDb $collection)
+    protected function prepareCollection(AbstractDb $collection): void
     {
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    protected function prepareFields()
+    protected function prepareFields(): void
     {
         $this->addTextColumn('name', __('Name')->render());
         $this->addTextColumn('image', __('Image')->render());

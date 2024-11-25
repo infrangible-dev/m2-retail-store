@@ -18,11 +18,9 @@ class Grid
     extends \Infrangible\BackendWidget\Block\Grid
 {
     /**
-     * @param AbstractDb $collection
-     *
      * @throws LocalizedException
      */
-    protected function prepareCollection(AbstractDb $collection)
+    protected function prepareCollection(AbstractDb $collection): void
     {
         if ($collection instanceof AbstractCollection) {
             $collection->addAttributeToSelect('url_key');
@@ -39,7 +37,7 @@ class Grid
     /**
      * @throws Exception
      */
-    protected function prepareFields()
+    protected function prepareFields(): void
     {
         $this->addTextColumn('url_key', __('URL Key')->render());
         $this->addTextColumn('code', __('Code')->render());
