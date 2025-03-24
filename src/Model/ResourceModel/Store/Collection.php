@@ -10,15 +10,17 @@ use Magento\Framework\Exception\LocalizedException;
 
 /**
  * @author      Andreas Knollmann
- * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
+ * @copyright   2014-2025 Softwareentwicklung Andreas Knollmann
  * @license     http://www.opensource.org/licenses/mit-license.php MIT
  */
-class Collection
-    extends AbstractCollection
+class Collection extends AbstractCollection
 {
     protected function _construct(): void
     {
-        $this->_init(Store::class, \Infrangible\RetailStore\Model\ResourceModel\Store::class);
+        $this->_init(
+            Store::class,
+            \Infrangible\RetailStore\Model\ResourceModel\Store::class
+        );
     }
 
     /**
@@ -29,5 +31,16 @@ class Collection
         $this->getSelect()->from(['e' => $this->getEntity()->getEntityTable()]);
 
         return $this;
+    }
+
+    /**
+     * @throws LocalizedException
+     */
+    public function addActiveFilter(): void
+    {
+        $this->addAttributeToFilter(
+            'status',
+            1
+        );
     }
 }

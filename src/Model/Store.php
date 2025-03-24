@@ -6,7 +6,6 @@ namespace Infrangible\RetailStore\Model;
 
 use Infrangible\Core\Helper\Stores;
 use Infrangible\Core\Helper\Url;
-use Infrangible\RetailStore\Model\ResourceModel;
 use Infrangible\RetailStore\Model\ResourceModel\Feature\CollectionFactory;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Model\AbstractModel;
@@ -16,7 +15,7 @@ use Magento\Framework\Registry;
 
 /**
  * @author      Andreas Knollmann
- * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
+ * @copyright   2014-2025 Softwareentwicklung Andreas Knollmann
  * @license     http://www.opensource.org/licenses/mit-license.php MIT
  *
  * @method string getCode()
@@ -62,8 +61,7 @@ use Magento\Framework\Registry;
  * @method int getCmsBlockId()
  * @method void setCmsBlockId(int $cmsBlockId)
  */
-class Store
-    extends AbstractModel
+class Store extends AbstractModel
 {
     /** @var string */
     public const ENTITY = 'retail_store';
@@ -86,27 +84,23 @@ class Store
     /** @var Feature[] */
     private $features = [];
 
-    /**
-     * @param Context $context
-     * @param Registry $registry
-     * @param Stores $storeHelper
-     * @param Url $urlHelper
-     * @param CollectionFactory $featureCollectionFactory
-     * @param AbstractResource|null $resource
-     * @param AbstractDb|null $resourceCollection
-     * @param array $data
-     */
     public function __construct(
         Context $context,
         Registry $registry,
         Stores $storeHelper,
         Url $urlHelper,
         CollectionFactory $featureCollectionFactory,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
-        array $data = [])
-    {
-        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct(
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
 
         $this->storeHelper = $storeHelper;
         $this->urlHelper = $urlHelper;
@@ -114,10 +108,7 @@ class Store
         $this->featureCollectionFactory = $featureCollectionFactory;
     }
 
-    /**
-     * @return void
-     */
-    protected function _construct()
+    protected function _construct(): void
     {
         $this->_init(ResourceModel\Store::class);
     }
@@ -128,12 +119,18 @@ class Store
 
         $feature = $this->getData('feature');
 
-        if (!empty($feature)) {
-            $featureIds = explode(',', $feature);
+        if (! empty($feature)) {
+            $featureIds = explode(
+                ',',
+                $feature
+            );
 
             $featureCollection = $this->featureCollectionFactory->create();
 
-            $featureCollection->addFieldToFilter('id', ['in' => $featureIds]);
+            $featureCollection->addFieldToFilter(
+                'id',
+                ['in' => $featureIds]
+            );
 
             /** @var Feature[] $features */
             $features = $featureCollection->getItems();
@@ -144,11 +141,6 @@ class Store
         return $this;
     }
 
-    /**
-     * Processing object before save data
-     *
-     * @return AbstractModel
-     */
     public function beforeSave(): AbstractModel
     {
         if ($this->isObjectNew()) {
@@ -160,12 +152,20 @@ class Store
         return parent::beforeSave();
     }
 
-    public function getUrl(): string
+    public function getUrlPath(): string
     {
         $categoryUrlSuffix = $this->storeHelper->getStoreConfig('catalog/seo/category_url_suffix');
 
-        return $this->urlHelper->getDirectUrl(sprintf('%s%s', $this->getUrlKey(),
-            empty($categoryUrlSuffix) ? '' : $categoryUrlSuffix));
+        return sprintf(
+            '%s%s',
+            $this->getUrlKey(),
+            empty($categoryUrlSuffix) ? '' : $categoryUrlSuffix
+        );
+    }
+
+    public function getUrl(): string
+    {
+        return $this->urlHelper->getDirectUrl($this->getUrlPath());
     }
 
     /**
