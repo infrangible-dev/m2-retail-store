@@ -2,110 +2,123 @@
 
 declare(strict_types=1);
 
-namespace Infrangible\RetailStore\Block;
-
-use Exception;
-use FeWeDev\Base\Variables;
-use Infrangible\Core\Helper\Cms;
-use Infrangible\Core\Helper\Registry;
-use Infrangible\Core\Helper\Stores;
-use Infrangible\RetailStore\Helper\Data;
-use Infrangible\RetailStore\Helper\Search;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\View\Element\Template;
-use Magento\Widget\Model\Template\Filter;
-
 /**
  * @author      Andreas Knollmann
- * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
  * @license     http://www.opensource.org/licenses/mit-license.php MIT
  */
-class Store
-    extends Template
+
+namespace Infrangible\RetailStore\Block;
+
+use FeWeDev\Base\Variables;
+use Infrangible\Core\Helper\Registry;
+use Infrangible\RetailStore\Controller\Store\View;
+use Infrangible\RetailStore\Helper\Data;
+use Infrangible\RetailStore\Helper\Search;
+use Infrangible\RetailStore\Model\Store as StoreModel;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\View\Element\Template;
+
+/**
+ * The page of a store: the CMS block of the store, filtered with its data and the nearby stores (variable
+ * "nearby_stores").
+ */
+class Store extends Template
 {
-    /** @var Registry */
-    protected $registryHelper;
+    /** Number of nearby stores. */
+    public const NEARBY_STORES = 3;
 
-    /** @var Variables */
-    protected $variables;
-
-    /** @var Data */
-    protected $retailStoreHelper;
-
-    /** @var \Infrangible\RetailStore\Block\Search */
-    protected $retailStoreSearchHelper;
-
-    /** @var Stores */
-    protected $storeHelper;
-
-    /** @var Filter */
-    protected $filter;
-
-    /** @var Cms */
-    protected $cmsHelper;
-
+    /**
+     * @param Template\Context $context
+     * @param Registry $registryHelper
+     * @param Variables $variables
+     * @param Data $retailStoreHelper
+     * @param Search $retailStoreSearchHelper
+     * @param array $data
+     * @phpstan-param array<string, mixed> $data
+     */
     public function __construct(
         Template\Context $context,
-        Registry $registryHelper,
-        Variables $variables,
-        Data $retailStoreHelper,
-        Search $retailStoreSearchHelper,
-        Stores $storeHelper,
-        Filter $filter,
-        Cms $cmsHelper,
-        array $data = [])
-    {
+        protected Registry $registryHelper,
+        protected Variables $variables,
+        protected Data $retailStoreHelper,
+        protected Search $retailStoreSearchHelper,
+        array $data = []
+    ) {
         parent::__construct($context, $data);
-
-        $this->registryHelper = $registryHelper;
-        $this->variables = $variables;
-        $this->retailStoreHelper = $retailStoreHelper;
-        $this->retailStoreSearchHelper = $retailStoreSearchHelper;
-        $this->storeHelper = $storeHelper;
-        $this->filter = $filter;
-        $this->cmsHelper = $cmsHelper;
     }
 
+    /**
+     * Returns the current store.
+     *
+     * @return StoreModel|null
+     */
+    public function getRetailStore(): ?StoreModel
+    {
+        $retailStore = $this->registryHelper->registry(View::REGISTRY_KEY);
+
+        return $retailStore instanceof StoreModel ? $retailStore : null;
+    }
+
+    /**
+     * Returns the content of the CMS block of the store.
+     *
+     * @return string
+     */
     public function getContent(): string
     {
-        /** @var \Infrangible\RetailStore\Model\Store $retailStore */
-        $retailStore = $this->registryHelper->registry('current_retail_store');
+        $retailStore = $this->getRetailStore();
 
-        $cmsBlockId = $retailStore->getCmsBlockId();
-
-        if (!$cmsBlockId) {
-            $cmsBlockId = $this->storeHelper->getStoreConfig('infrangible_retailstore/store/cms_block_id');
+        if ($retailStore === null) {
+            return '';
         }
 
-        $cmsBlock = $this->cmsHelper->loadCmsBlock((int)$cmsBlockId);
+        $cmsBlock = $this->retailStoreHelper->getCmsBlock($this->retailStoreHelper->getStoreCmsBlockId($retailStore));
 
-        $content = $cmsBlock->getContent();
+        if ($cmsBlock === null) {
+            return '';
+        }
 
-        $this->filter->setVariables($this->retailStoreHelper->getRetailStoreData($retailStore));
+        $variables = $this->retailStoreHelper->getRetailStoreData($retailStore);
 
-        $nearbyStoresData = [];
+        $variables[ 'nearby_stores' ] = $this->retailStoreHelper->getRetailStoresData(
+            $this->getNearbyStores($retailStore)
+        );
+
+        return $this->retailStoreHelper->filterContent(
+            $this->retailStoreHelper->getCmsBlockContent($cmsBlock),
+            $variables
+        );
+    }
+
+    /**
+     * Returns the stores nearest to the store.
+     *
+     * @param StoreModel $retailStore
+     *
+     * @return StoreModel[]
+     */
+    public function getNearbyStores(StoreModel $retailStore): array
+    {
+        $latitude = $retailStore->getLatitude();
+        $longitude = $retailStore->getLongitude();
+
+        if ($latitude === null || $longitude === null) {
+            return [];
+        }
 
         try {
-            $nearbyStores =
-                $this->retailStoreSearchHelper->searchRetailStoresWithCoordinates(
-                    floatval($retailStore->getLatitude()),
-                    floatval($retailStore->getLongitude()),
-                    4);
-
-            array_shift($nearbyStores);
-
-            $nearbyStoresData = $this->retailStoreHelper->getRetailStoresData($nearbyStores);
+            return $this->retailStoreSearchHelper->searchRetailStoresWithCoordinates(
+                $latitude,
+                $longitude,
+                self::NEARBY_STORES,
+                0,
+                [$this->variables->intValue($retailStore->getId())]
+            );
         } catch (LocalizedException $exception) {
-        }
-
-        $this->filter->setVariables(['nearby_stores' => $nearbyStoresData]);
-
-        try {
-            return $this->filter->filter($content);
-        } catch (Exception $exception) {
             $this->_logger->error($exception);
 
-            return '';
+            return [];
         }
     }
 }

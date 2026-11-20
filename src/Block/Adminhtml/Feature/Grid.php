@@ -2,24 +2,40 @@
 
 declare(strict_types=1);
 
+/**
+ * @author      Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ */
+
 namespace Infrangible\RetailStore\Block\Adminhtml\Feature;
 
 use Exception;
+use Magento\Framework\DataObject;
 use Magento\Framework\Data\Collection\AbstractDb;
 
 /**
- * @author      Andreas Knollmann
- * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
- * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ * Grid of the features.
  */
-class Grid
-    extends \Infrangible\BackendWidget\Block\Grid
+class Grid extends \Infrangible\BackendWidget\Block\Grid
 {
+    /**
+     * The grid shows all features.
+     *
+     * @param AbstractDb $collection
+     * @phpstan-param AbstractDb<DataObject> $collection
+     *
+     * @return void
+     */
+    // phpcs:ignore Magento2.CodeAnalysis.EmptyBlock -- the grid shows all features
     protected function prepareCollection(AbstractDb $collection): void
     {
     }
 
     /**
+     * Adds the columns.
+     *
+     * @return void
      * @throws Exception
      */
     protected function prepareFields(): void
@@ -30,6 +46,8 @@ class Grid
     }
 
     /**
+     * The grid has no hidden fields.
+     *
      * @return string[]
      */
     protected function getHiddenFieldNames(): array

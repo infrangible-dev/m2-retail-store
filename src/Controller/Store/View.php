@@ -1,124 +1,116 @@
-<?php /** @noinspection PhpDeprecationInspection */
+<?php
 
 declare(strict_types=1);
 
+/**
+ * @author      Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ */
+
 namespace Infrangible\RetailStore\Controller\Store;
 
-use Exception;
 use FeWeDev\Base\Variables;
 use Infrangible\Core\Helper\Registry;
 use Infrangible\Core\Helper\Stores;
+use Infrangible\RetailStore\Model\ResourceModel\StoreFactory as StoreResourceFactory;
 use Infrangible\RetailStore\Model\StoreFactory;
-use Magento\Framework\App\Action\Action;
-use Magento\Framework\App\Action\Context;
-use Magento\Framework\Controller\Result\RawFactory;
-use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\App\Action\HttpGetActionInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Controller\Result\Forward;
+use Magento\Framework\Controller\Result\ForwardFactory;
+use Magento\Framework\View\Result\Page;
+use Magento\Framework\View\Result\PageFactory;
 use Magento\Theme\Block\Html\Breadcrumbs;
 
 /**
- * @author      Andreas Knollmann
- * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
- * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ * Shows the page of an active retail store; the router forwards the URLs of the stores to this action.
  */
-class View
-    extends Action
+class View implements HttpGetActionInterface
 {
-    /** @var Registry */
-    protected $registryHelper;
+    /** Registry key of the current store. */
+    public const REGISTRY_KEY = 'current_retail_store';
 
-    /** @var Variables */
-    protected $variables;
-
-    /** @var StoreFactory */
-    protected $retailStoreFactory;
-
-    /** @var Stores */
-    protected $storeHelper;
-
-    /** @var \Infrangible\RetailStore\Model\ResourceModel\StoreFactory */
-    protected $retailStoreResourceFactory;
-
-    /** @var RawFactory */
-    protected $resultRawFactory;
-
+    /**
+     * @param RequestInterface $request
+     * @param PageFactory $pageFactory
+     * @param ForwardFactory $forwardFactory
+     * @param Registry $registryHelper
+     * @param Variables $variables
+     * @param Stores $storeHelper
+     * @param StoreFactory $retailStoreFactory
+     * @param StoreResourceFactory $retailStoreResourceFactory
+     */
     public function __construct(
-        Context $context,
-        Registry $registryHelper,
-        Variables $variables,
-        Stores $storeHelper,
-        StoreFactory $retailStoreFactory,
-        \Infrangible\RetailStore\Model\ResourceModel\StoreFactory $retailStoreResourceFactory,
-        RawFactory $resultRawFactory)
-    {
-        parent::__construct($context);
-
-        $this->registryHelper = $registryHelper;
-        $this->variables = $variables;
-        $this->storeHelper = $storeHelper;
-
-        $this->retailStoreFactory = $retailStoreFactory;
-        $this->retailStoreResourceFactory = $retailStoreResourceFactory;
-        $this->resultRawFactory = $resultRawFactory;
+        protected RequestInterface $request,
+        protected PageFactory $pageFactory,
+        protected ForwardFactory $forwardFactory,
+        protected Registry $registryHelper,
+        protected Variables $variables,
+        protected Stores $storeHelper,
+        protected StoreFactory $retailStoreFactory,
+        protected StoreResourceFactory $retailStoreResourceFactory
+    ) {
     }
 
     /**
-     * @return ResultInterface|void
-     * @throws Exception
+     * Shows the page of the store, or the page "not found" if there is no active store with the ID.
+     *
+     * @return Page|Forward
      */
-    public function execute()
+    public function execute(): Page|Forward
     {
-        $storeId = $this->getRequest()->getParam('retail_store_id');
-
-        if (!$storeId) {
-            $this->_forward('noRoute');
-
-            return;
-        }
+        $retailStoreId = $this->request->getParam('retail_store_id');
 
         $retailStore = $this->retailStoreFactory->create();
 
-        $this->retailStoreResourceFactory->create()->load($retailStore, $storeId);
-
-        if (!$retailStore->getId()) {
-            $this->_forward('noRoute');
-
-            return;
+        if (is_numeric($retailStoreId)) {
+            $this->retailStoreResourceFactory->create()->load($retailStore, (int)$retailStoreId);
         }
 
-        $this->registryHelper->register('current_retail_store', $retailStore, true);
+        if (! $retailStore->getId() || ! $retailStore->isActive()) {
+            $forward = $this->forwardFactory->create();
 
-        $update = $this->_view->getLayout()->getUpdate();
+            $forward->forward('noroute');
 
-        $update->addHandle('default');
-
-        $this->_view->addActionLayoutHandles();
-
-        $update->addHandle('infrangible_retailstore_store_view');
-        $update->addHandle(sprintf('infrangible_retailstore_store_view_%d', $retailStore->getId()));
-
-        $this->_view->loadLayoutUpdates();
-
-        $this->_view->generateLayoutXml()->generateLayoutBlocks();
-
-        $pageConfig = $this->_view->getPage()->getConfig();
-
-        $pageConfig->getTitle()->set($retailStore->getName());
-
-        if (!$this->variables->isEmpty($retailStore->getDescription())) {
-            $pageConfig->setDescription($retailStore->getDescription());
+            return $forward;
         }
 
-        /** @var Breadcrumbs $breadcrumbs */
-        $breadcrumbs = $this->_view->getLayout()->getBlock('breadcrumbs');
+        $this->registryHelper->register(self::REGISTRY_KEY, $retailStore, true);
 
-        if ($breadcrumbs) {
-            $breadcrumbs->addCrumb('home', ['label' => __('Home'),
-                'title' => __('Go to Home Page'),
-                'link' => $this->storeHelper->getWebUrl()]);
+        $page = $this->pageFactory->create();
 
-            $breadcrumbs->addCrumb('search', ['label' => $retailStore->getName(), 'title' => $retailStore->getName()]);
+        $page->addHandle(
+            sprintf('infrangible_retailstore_store_view_%d', $this->variables->intValue($retailStore->getId()))
+        );
+
+        $name = $retailStore->getName();
+
+        $pageConfig = $page->getConfig();
+
+        $pageConfig->getTitle()->set($name);
+
+        $description = $retailStore->getDescription();
+
+        if ($description !== '') {
+            $pageConfig->setDescription($description);
         }
 
-        return $this->_view->getPage();
+        $breadcrumbs = $page->getLayout()->getBlock('breadcrumbs');
+
+        if ($breadcrumbs instanceof Breadcrumbs) {
+            $breadcrumbs->addCrumb(
+                'home',
+                [
+                    'label' => __('Home'),
+                    'title' => __('Go to Home Page'),
+                    'link'  => $this->storeHelper->getWebUrl()
+                ]
+            );
+
+            $breadcrumbs->addCrumb('retail_store', ['label' => $name, 'title' => $name]);
+        }
+
+        return $page;
     }
 }

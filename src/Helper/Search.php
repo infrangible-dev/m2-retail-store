@@ -2,92 +2,88 @@
 
 declare(strict_types=1);
 
+/**
+ * @author      Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ */
+
 namespace Infrangible\RetailStore\Helper;
 
 use FeWeDev\Base\Arrays;
+use FeWeDev\Base\Variables;
 use Infrangible\Core\Helper\Stores;
 use Infrangible\GoogleMaps\Model\GeocodingApi;
 use Infrangible\RetailStore\Model\ResourceModel\Store\CollectionFactory;
 use Infrangible\RetailStore\Model\Store;
-use Infrangible\RetailStore\Model\StoreFactory;
 use Magento\Framework\Exception\LocalizedException;
 
 /**
- * @author      Andreas Knollmann
- * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
- * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ * Searches the active retail stores near a location or coordinates.
  */
 class Search
 {
+    /** Mean radius of the earth in meters. */
     public const EARTH_RADIUS = 6371000;
 
-    /** @var Stores */
-    protected $storeHelper;
-
-    /** @var GeocodingApi */
-    protected $googleApi;
-
-    /** @var StoreFactory */
-    protected $retailStoreFactory;
-
-    /** @var \Infrangible\RetailStore\Model\ResourceModel\StoreFactory */
-    protected $retailStoreResourceFactory;
-
-    /** @var CollectionFactory */
-    protected $retailStoreCollectionFactory;
-
-    /** @var Arrays */
-    protected $arrays;
-
+    /**
+     * @param Stores $storeHelper
+     * @param GeocodingApi $googleApi
+     * @param CollectionFactory $retailStoreCollectionFactory
+     * @param Arrays $arrays
+     * @param Variables $variables
+     */
     public function __construct(
-        Stores $storeHelper,
-        GeocodingApi $googleApi,
-        StoreFactory $retailStoreFactory,
-        \Infrangible\RetailStore\Model\ResourceModel\StoreFactory $retailStoreResourceFactory,
-        CollectionFactory $retailStoreCollectionFactory,
-        Arrays $arrays)
-    {
-        $this->storeHelper = $storeHelper;
-
-        $this->googleApi = $googleApi;
-        $this->retailStoreFactory = $retailStoreFactory;
-        $this->retailStoreResourceFactory = $retailStoreResourceFactory;
-        $this->retailStoreCollectionFactory = $retailStoreCollectionFactory;
-        $this->arrays = $arrays;
+        protected Stores $storeHelper,
+        protected GeocodingApi $googleApi,
+        protected CollectionFactory $retailStoreCollectionFactory,
+        protected Arrays $arrays,
+        protected Variables $variables
+    ) {
     }
 
     /**
+     * Returns the active stores near the location, sorted by distance.
+     *
+     * The location is searched with the Geocoding API of Google Maps.
+     *
      * @param string $location
-     * @param int $maxNumber
-     * @param int $maxDistance
+     * @param int $maxNumber the maximum number of stores, 0 for all
+     * @param int $maxDistance the maximum distance in kilometers, 0 for any distance
      *
      * @return Store[]
      * @throws LocalizedException
      */
-    public function searchRetailStoresWithLocation(
-        string $location,
-        int $maxNumber = 0,
-        int $maxDistance = 99999999): array
+    public function searchRetailStoresWithLocation(string $location, int $maxNumber = 0, int $maxDistance = 0): array
     {
-        $coordinates = $this->googleApi->searchLocation($location);
+        $location = trim($location);
 
-        if (empty($coordinates)) {
+        if ($location === '') {
             return [];
         }
 
-        $location = $this->arrays->getValue($coordinates, 'geometry:location', []);
+        $searchResult = $this->googleApi->searchLocation($location);
 
-        $latitude = $this->arrays->getValue($location, 'lat');
-        $longitude = $this->arrays->getValue($location, 'lng');
+        $latitude = $this->arrays->getValue($searchResult, 'geometry:location:lat');
+        $longitude = $this->arrays->getValue($searchResult, 'geometry:location:lng');
 
-        return $this->searchRetailStoresWithCoordinates($latitude, $longitude, $maxNumber, $maxDistance);
+        if (! is_numeric($latitude) || ! is_numeric($longitude)) {
+            return [];
+        }
+
+        return $this->searchRetailStoresWithCoordinates((float)$latitude, (float)$longitude, $maxNumber, $maxDistance);
     }
 
     /**
+     * Returns the active stores near the coordinates with all attributes, sorted by distance.
+     *
+     * The distance in kilometers is set as data "distance", formatted for the current store view.
+     *
      * @param float $latitude
      * @param float $longitude
-     * @param int $maxNumber
-     * @param int $maxDistance
+     * @param int $maxNumber the maximum number of stores, 0 for all
+     * @param int $maxDistance the maximum distance in kilometers, 0 for any distance
+     * @param int[] $excludedRetailStoreIds
      *
      * @return Store[]
      * @throws LocalizedException
@@ -96,46 +92,53 @@ class Search
         float $latitude,
         float $longitude,
         int $maxNumber = 0,
-        int $maxDistance = 99999999): array
-    {
+        int $maxDistance = 0,
+        array $excludedRetailStoreIds = []
+    ): array {
         $retailStoreCollection = $this->retailStoreCollectionFactory->create();
 
-        $retailStoreCollection->addAttributeToSelect('latitude');
-        $retailStoreCollection->addAttributeToSelect('longitude');
-        $retailStoreCollection->addFieldToFilter('status', ['eq' => 1]);
-
-        $retailStoreCollection->load();
+        $retailStoreCollection->addAttributeToSelect('*');
+        $retailStoreCollection->addActiveFilter();
 
         $retailStoreDistances = [];
+        $retailStores = [];
 
-        /** @var Store $retailStore */
         foreach ($retailStoreCollection as $retailStore) {
-            $distance = $this->calculateDistance($latitude, $longitude, floatval($retailStore->getLatitude()),
-                floatval($retailStore->getLongitude()));
+            if (! $retailStore instanceof Store) {
+                continue;
+            }
 
-            if ($distance <= $maxDistance) {
-                $retailStoreDistances[$retailStore->getId()] = $distance;
+            $retailStoreId = $this->variables->intValue($retailStore->getId());
+
+            if (in_array($retailStoreId, $excludedRetailStoreIds, true)) {
+                continue;
+            }
+
+            $retailStoreLatitude = $retailStore->getLatitude();
+            $retailStoreLongitude = $retailStore->getLongitude();
+
+            if ($retailStoreLatitude === null || $retailStoreLongitude === null) {
+                continue;
+            }
+
+            $distance = $this->calculateDistance($latitude, $longitude, $retailStoreLatitude, $retailStoreLongitude);
+
+            if ($maxDistance <= 0 || $distance <= $maxDistance) {
+                $retailStoreDistances[ $retailStoreId ] = $distance;
+                $retailStores[ $retailStoreId ] = $retailStore;
             }
         }
 
         asort($retailStoreDistances);
 
-        $retailStoreIds = array_keys($retailStoreDistances);
-
         if ($maxNumber > 0) {
-            $retailStoreIds = array_splice($retailStoreIds, 0, $maxNumber);
+            $retailStoreDistances = array_slice($retailStoreDistances, 0, $maxNumber, true);
         }
 
         $result = [];
 
-        $retailStoreResource = $this->retailStoreResourceFactory->create();
-
-        foreach ($retailStoreIds as $retailStoreId) {
-            $retailStore = $this->retailStoreFactory->create();
-
-            $retailStoreResource->load($retailStore, $retailStoreId);
-
-            $distance = $retailStoreDistances[$retailStore->getId()];
+        foreach ($retailStoreDistances as $retailStoreId => $distance) {
+            $retailStore = $retailStores[ $retailStoreId ];
 
             $retailStore->setData('distance', $this->storeHelper->formatNumber($distance));
 
@@ -146,6 +149,8 @@ class Search
     }
 
     /**
+     * Returns the distance between the coordinates in kilometers (great-circle distance with the Vincenty formula).
+     *
      * @param float $latitude1
      * @param float $longitude1
      * @param float $latitude2
@@ -153,7 +158,7 @@ class Search
      *
      * @return float
      */
-    public function calculateDistance(float $latitude1, float $longitude1, float $latitude2, float $longitude2)
+    public function calculateDistance(float $latitude1, float $longitude1, float $latitude2, float $longitude2): float
     {
         $latFrom = deg2rad($latitude1);
         $lonFrom = deg2rad($longitude1);
@@ -161,13 +166,12 @@ class Search
         $lonTo = deg2rad($longitude2);
 
         $lonDelta = $lonTo - $lonFrom;
-        $a = pow(cos($latTo) * sin($lonDelta), 2) +
-            pow(cos($latFrom) * sin($latTo) - sin($latFrom) * cos($latTo) * cos($lonDelta), 2);
+        $a = (cos($latTo) * sin($lonDelta)) ** 2 +
+            (cos($latFrom) * sin($latTo) - sin($latFrom) * cos($latTo) * cos($lonDelta)) ** 2;
         $b = sin($latFrom) * sin($latTo) + cos($latFrom) * cos($latTo) * cos($lonDelta);
 
         $angle = atan2(sqrt($a), $b);
 
-        //distance in km
         return ($angle * static::EARTH_RADIUS) / 1000;
     }
 }

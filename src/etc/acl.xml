@@ -2,7 +2,7 @@
 
 <!--
  * @author      Andreas Knollmann
- * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
  * @license     http://www.opensource.org/licenses/mit-license.php MIT
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
@@ -16,9 +16,9 @@
                         </resource>
                     </resource>
                 </resource>
-                <resource id="Infrangible_RetailStore::infrangible_retailstore" title="Retail Store" sortOrder="820">
-                    <resource id="Infrangible_RetailStore::infrangible_retailstore_manage" title="Manage Stores" sortOrder="10"/>
-                    <resource id="Infrangible_RetailStore::infrangible_retailstore_feature" title="Manage Features" sortOrder="20"/>
+                <resource id="Infrangible_RetailStore::infrangible_retailstore" title="Retail Store" translate="title" sortOrder="820">
+                    <resource id="Infrangible_RetailStore::infrangible_retailstore_manage" title="Manage Retail Stores" translate="title" sortOrder="10"/>
+                    <resource id="Infrangible_RetailStore::infrangible_retailstore_feature" title="Manage Features" translate="title" sortOrder="20"/>
                 </resource>
             </resource>
         </resources>

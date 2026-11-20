@@ -2,42 +2,71 @@
 
 declare(strict_types=1);
 
+/**
+ * @author      Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ */
+
 namespace Infrangible\RetailStore\Model\Entity\Attribute\Source;
 
+use FeWeDev\Base\Variables;
+use Infrangible\RetailStore\Model\Feature as FeatureModel;
 use Infrangible\RetailStore\Model\ResourceModel\Feature\CollectionFactory;
 use Magento\Eav\Model\Entity\Attribute\Source\AbstractSource;
 
 /**
- * @author      Andreas Knollmann
- * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
- * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ * The features of stores, with the option "None".
  */
-class Feature
-    extends AbstractSource
+class Feature extends AbstractSource
 {
-    /** @var CollectionFactory */
-    protected $featureCollectionFactory;
-
-    public function __construct(CollectionFactory $featureCollectionFactory)
-    {
-        $this->featureCollectionFactory = $featureCollectionFactory;
+    /**
+     * @param CollectionFactory $featureCollectionFactory
+     * @param Variables $variables
+     */
+    public function __construct(
+        protected CollectionFactory $featureCollectionFactory,
+        protected Variables $variables
+    ) {
     }
 
+    /**
+     * Returns the option "None" and the features.
+     *
+     * @return array
+     * @phpstan-return array<int, array{value: int, label: string}>
+     */
     public function getAllOptions(): array
     {
-        if (is_null($this->_options)) {
-            $this->_options[] = ['label' => 'None',
-                'value' => 0];
-
-            $featureCollection = $this->featureCollectionFactory->create();
-
-            /** @var \Infrangible\RetailStore\Model\Feature $feature */
-            foreach ($featureCollection as $feature) {
-                $this->_options[] = ['label' => $feature->getName(),
-                    'value' => $feature->getId()];
-            }
+        if ($this->_options === null) {
+            $this->_options = array_merge(
+                [['value' => 0, 'label' => __('None')->render()]],
+                $this->getFeatureOptions()
+            );
         }
 
         return $this->_options;
+    }
+
+    /**
+     * Returns the features.
+     *
+     * @return array
+     * @phpstan-return array<int, array{value: int, label: string}>
+     */
+    public function getFeatureOptions(): array
+    {
+        $options = [];
+
+        foreach ($this->featureCollectionFactory->create() as $feature) {
+            if ($feature instanceof FeatureModel) {
+                $options[] = [
+                    'value' => $this->variables->intValue($feature->getId()),
+                    'label' => $feature->getName()
+                ];
+            }
+        }
+
+        return $options;
     }
 }

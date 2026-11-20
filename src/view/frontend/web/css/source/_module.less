@@ -1,110 +1,130 @@
-//noinspection LessUnresolvedVariable
+/**
+ * @author      Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ */
+
+//
+//  Variables
+//  _____________________________________________
+
+@retail-store__border-color: #ccc;
+
+//
+//  Common
+//  _____________________________________________
+
 & when (@media-common = true) {
-  .infrangible_retailstore-store-view {
-    .page-main {
-      h4:first-child {
-        margin-top: 0;
-      }
-
-      .details {
-        float: left;
-        max-width: 600px;
-
-        .map {
-          margin-top: 2rem;
-          min-height: 400px;
-        }
-
-        ul.features {
-          overflow: hidden;
-          margin-bottom: 2.5rem;
-          padding-left: 0;
-          list-style: none;
-
-          li {
-            float: left;
-            margin-right: 10px;
-
-            img {
-              max-width: 120px;
-              max-height: 160px;
+    /* phpcs:ignore Magento2.Less.ClassNaming -- the body class of the page handle contains underscores */
+    .infrangible_retailstore-store-view {
+        .page-main {
+            h4 {
+                &:first-child {
+                    margin-top: 0;
+                }
             }
-          }
-        }
 
-        ul.nearby-stores {
-          .nearby-store {
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #ccc;
+            .details {
+                float: left;
+                max-width: 600px;
 
-            .nearby-store-link {
-              margin-top: 1rem;
+                .map {
+                    margin-top: 2rem;
+                    min-height: 400px;
+                }
+
+                ul.features {
+                    list-style: none;
+                    margin-bottom: 2.5rem;
+                    overflow: hidden;
+                    padding-left: 0;
+
+                    li {
+                        float: left;
+                        margin-right: 10px;
+
+                        img {
+                            max-height: 160px;
+                            max-width: 120px;
+                        }
+                    }
+                }
+
+                ul.nearby-stores {
+                    .nearby-store {
+                        border-bottom: 1px solid @retail-store__border-color;
+                        padding-bottom: 1rem;
+
+                        .nearby-store-link {
+                            margin-top: 1rem;
+                        }
+                    }
+
+                    .nearby-store {
+                        &:last-child {
+                            border-bottom: 0;
+                        }
+                    }
+                }
             }
-          }
 
-          .nearby-store:last-child {
-            border-bottom: 0;
-          }
+            .image {
+                float: right;
+                max-width: 600px;
+            }
+
+            .seo-text {
+                float: right;
+                margin-bottom: 2.5rem;
+                max-width: 600px;
+            }
         }
-      }
-
-      .image {
-        float: right;
-        max-width: 600px;
-      }
-
-      .seo-text {
-        float: right;
-        max-width: 600px;
-        margin-bottom: 2.5rem;
-      }
     }
-  }
 
-  .google-maps {
-    div [role="dialog"] {
-      h3 {
-        margin-top: 0;
-        margin-bottom: 0.5rem;
-      }
+    .google-maps {
+        div [role='dialog'] {
+            h3 {
+                margin-bottom: .5rem;
+                margin-top: 0;
+            }
 
-      .info-window-line {
-        margin-bottom: 0.2rem;
+            .info-window-line {
+                margin-bottom: .2rem;
 
-        .label {
-          font-weight: 600;
+                .label {
+                    font-weight: 600;
+                }
+            }
+
+            .info-window-link {
+                padding-top: .5rem;
+            }
         }
-      }
-
-      .info-window-link {
-        padding-top: 0.5rem;
-      }
-    }
-  }
-
-  .retail-store-search-bar {
-    .radius {
-      margin-top: 0.5rem;
     }
 
-    .buttons {
-      margin-top: 0.5rem;
+    .retail-store-search-bar {
+        .radius {
+            margin-top: .5rem;
+        }
+
+        .buttons {
+            margin-top: .5rem;
+        }
     }
-  }
 
-  ul.retail-stores {
-    li.retail-store {
-      clear: both;
+    ul.retail-stores {
+        li.retail-store {
+            clear: both;
 
-      .retail-store-details {
-        float: left;
-        padding-bottom: 20px;
-        margin-right: 20px;
-      }
+            .retail-store-details {
+                float: left;
+                margin-right: 20px;
+                padding-bottom: 20px;
+            }
 
-      .retail-store-link {
-        float: left;
-      }
+            .retail-store-link {
+                float: left;
+            }
+        }
     }
-  }
 }

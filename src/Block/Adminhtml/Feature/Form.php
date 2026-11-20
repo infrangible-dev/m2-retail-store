@@ -2,29 +2,42 @@
 
 declare(strict_types=1);
 
-namespace Infrangible\RetailStore\Block\Adminhtml\Feature;
-
 /**
  * @author      Andreas Knollmann
- * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
  * @license     http://www.opensource.org/licenses/mit-license.php MIT
  */
-class Form
-    extends \Infrangible\BackendWidget\Block\Form
-{
-    protected function prepareFields(\Magento\Framework\Data\Form $form)
-    {
-        $object = $this->getObject();
 
+namespace Infrangible\RetailStore\Block\Adminhtml\Feature;
+
+use Magento\Framework\Data\Form as DataForm;
+
+/**
+ * Form of a feature.
+ */
+class Form extends \Infrangible\BackendWidget\Block\Form
+{
+    /**
+     * Adds the fields.
+     *
+     * @param DataForm $form
+     *
+     * @return void
+     */
+    protected function prepareFields(DataForm $form): void
+    {
         $informationFieldSet = $form->addFieldset('information', ['legend' => __('Information')]);
 
         $this->addTextField($informationFieldSet, 'name', __('Name')->render(), true);
-        $informationFieldSet->addField('image', 'image', ['name' => 'image',
-            'label' => __('Image'),
-            'value' => $object->getId() ? $object->getDataUsingMethod('image') : '']);
+        $this->addImageField($informationFieldSet, 'image', __('Image')->render());
         $this->addYesNoField($informationFieldSet, 'status', __('Active')->render(), true);
     }
 
+    /**
+     * The form uploads images.
+     *
+     * @return bool
+     */
     protected function isUploadForm(): bool
     {
         return true;

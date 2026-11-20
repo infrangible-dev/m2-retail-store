@@ -2,21 +2,18 @@
 
 declare(strict_types=1);
 
-use Magento\Framework\View\TemplateEngine\Php;
-use Infrangible\RetailStore\Block\Store;
-
 /**
  * @author      Andreas Knollmann
- * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
  * @license     http://www.opensource.org/licenses/mit-license.php MIT
  */
 
-/** @var Php $this */
+use Infrangible\RetailStore\Block\Store;
+
 /** @var Store $block */
 ?>
+<?= $block->getChildHtml('retail_store_before') ?>
 
-<?php echo $block->getChildHtml('retail_store_before'); ?>
+<?= /* @noEscape */ $block->getContent() ?>
 
-<?php echo $block->getContent(); ?>
-
-<?php echo $block->getChildHtml('retail_store_after'); ?>
+<?= $block->getChildHtml('retail_store_after') ?>

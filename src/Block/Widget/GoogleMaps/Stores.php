@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+/**
+ * @author      Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ */
+
 namespace Infrangible\RetailStore\Block\Widget\GoogleMaps;
 
 use FeWeDev\Base\Arrays;
@@ -13,38 +19,39 @@ use Infrangible\RetailStore\Helper\Data;
 use Magento\Framework\View\Element\Template;
 
 /**
- * @author      Andreas Knollmann
- * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
- * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ * Widget with a map and all active stores as markers.
  */
-class Stores
-    extends JsonMarker
+class Stores extends JsonMarker
 {
-    /** @var Data */
-    protected $retailStoreHelper;
-
+    /**
+     * @param Template\Context $context
+     * @param Registry $registryHelper
+     * @param Json $json
+     * @param Arrays $arrays
+     * @param Variables $variables
+     * @param Data $retailStoreHelper
+     * @param array $data
+     * @phpstan-param array<string, mixed> $data
+     */
     public function __construct(
         Template\Context $context,
         Registry $registryHelper,
         Json $json,
         Arrays $arrays,
         Variables $variables,
-        Data $retailStoreHelper,
-        array $data = [])
-    {
+        protected Data $retailStoreHelper,
+        array $data = []
+    ) {
         parent::__construct($context, $registryHelper, $json, $arrays, $variables, $data);
-
-        $this->retailStoreHelper = $retailStoreHelper;
     }
 
+    /**
+     * Returns the markers of all active stores as JSON.
+     *
+     * @return string
+     */
     public function getMarkerJson(): string
     {
-        try {
-            return str_replace('<<<', '{', str_replace('>>>', '}',
-                $this->retailStoreHelper->getMarkerJson($this->retailStoreHelper->loadActiveRetailStores())));
-        } catch (\Exception $exception) {
-            $this->_logger->error($exception->getMessage());
-            return '';
-        }
+        return $this->retailStoreHelper->getMarkersJson($this->retailStoreHelper->loadActiveRetailStores());
     }
 }

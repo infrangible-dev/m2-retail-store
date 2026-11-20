@@ -2,17 +2,20 @@
 
 declare(strict_types=1);
 
+/**
+ * @author      Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ */
+
 namespace Infrangible\RetailStore\Controller\Adminhtml\Store;
 
 use Infrangible\RetailStore\Traits\Store;
 
 /**
- * @author      Andreas Knollmann
- * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
- * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ * Shows the form of a retail store.
  */
-class Edit
-    extends \Infrangible\BackendWidget\Controller\Backend\Object\Edit
+class Edit extends \Infrangible\BackendWidget\Controller\Backend\Object\Edit
 {
     use Store;
 }

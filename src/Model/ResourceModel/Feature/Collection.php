@@ -2,21 +2,30 @@
 
 declare(strict_types=1);
 
+/**
+ * @author      Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ */
+
 namespace Infrangible\RetailStore\Model\ResourceModel\Feature;
 
 use Infrangible\RetailStore\Model\Feature;
+use Infrangible\RetailStore\Model\ResourceModel\Feature as FeatureResource;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
 /**
- * @author      Andreas Knollmann
- * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
- * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ * Collection of features.
  */
-class Collection
-    extends AbstractCollection
+class Collection extends AbstractCollection
 {
+    /**
+     * Sets the model and the resource model.
+     *
+     * @return void
+     */
     protected function _construct(): void
     {
-        $this->_init(Feature::class, \Infrangible\RetailStore\Model\ResourceModel\Feature::class);
+        $this->_init(Feature::class, FeatureResource::class);
     }
 }

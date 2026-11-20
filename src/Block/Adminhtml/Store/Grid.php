@@ -2,39 +2,47 @@
 
 declare(strict_types=1);
 
+/**
+ * @author      Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ */
+
 namespace Infrangible\RetailStore\Block\Adminhtml\Store;
 
 use Exception;
 use Magento\Eav\Model\Entity\Collection\AbstractCollection;
+use Magento\Framework\DataObject;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Exception\LocalizedException;
 
 /**
- * @author      Andreas Knollmann
- * @copyright   2014-2024 Softwareentwicklung Andreas Knollmann
- * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ * Grid of the retail stores.
  */
-class Grid
-    extends \Infrangible\BackendWidget\Block\Grid
+class Grid extends \Infrangible\BackendWidget\Block\Grid
 {
     /**
+     * Adds the attributes of the columns to the collection.
+     *
+     * @param AbstractDb $collection
+     * @phpstan-param AbstractDb<DataObject> $collection
+     *
+     * @return void
      * @throws LocalizedException
      */
     protected function prepareCollection(AbstractDb $collection): void
     {
         if ($collection instanceof AbstractCollection) {
-            $collection->addAttributeToSelect('url_key');
-            $collection->addAttributeToSelect('code');
-            $collection->addAttributeToSelect('name');
-            $collection->addAttributeToSelect('street');
-            $collection->addAttributeToSelect('postcode');
-            $collection->addAttributeToSelect('city');
-            $collection->addAttributeToSelect('country');
-            $collection->addAttributeToSelect('status');
+            $collection->addAttributeToSelect(
+                ['url_key', 'code', 'name', 'street', 'postcode', 'city', 'country', 'status']
+            );
         }
     }
 
     /**
+     * Adds the columns.
+     *
+     * @return void
      * @throws Exception
      */
     protected function prepareFields(): void
@@ -50,6 +58,8 @@ class Grid
     }
 
     /**
+     * The grid has no hidden fields.
+     *
      * @return string[]
      */
     protected function getHiddenFieldNames(): array

@@ -2,17 +2,22 @@
 
 declare(strict_types=1);
 
+/**
+ * @author      Andreas Knollmann
+ * @copyright   Copyright (c) 2014-2026 Softwareentwicklung Andreas Knollmann
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT
+ */
+
 use Infrangible\RetailStore\Block\Widget\GoogleMaps\Search\Buttons;
-use Magento\Framework\View\TemplateEngine\Php;
+use Magento\Framework\Escaper;
 
-/** @var Php $this */
 /** @var Buttons $block */
+/** @var Escaper $escaper */
 ?>
-
 <button name="location-search" id="location-search" type="submit" class="action primary">
-    <span><?php echo __('Search Retail Store'); ?></span>
+    <span><?= $escaper->escapeHtml(__('Search Retail Store')) ?></span>
 </button>
 
-<button name="determine-location" id="determine-location" type="button">
-    <span><?php echo __('Determine location'); ?></span>
+<button name="determine-location" id="determine-location" type="button" class="action">
+    <span><?= $escaper->escapeHtml(__('Determine location')) ?></span>
 </button>
