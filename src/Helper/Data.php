@@ -153,12 +153,10 @@ class Data extends AbstractHelper
      */
     protected function getAttributeCodes(): array
     {
-        if ($this->attributeCodes === null) {
-            $this->attributeCodes = array_map(
-                'strval',
-                array_keys($this->eavConfig->getEntityAttributes(Store::ENTITY))
-            );
-        }
+        $this->attributeCodes ??= array_map(
+            'strval',
+            array_keys($this->eavConfig->getEntityAttributes(Store::ENTITY))
+        );
 
         return $this->attributeCodes;
     }
