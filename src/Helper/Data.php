@@ -14,6 +14,7 @@ use Exception;
 use FeWeDev\Base\Variables;
 use Infrangible\Core\Helper\Cms;
 use Infrangible\Core\Helper\Stores;
+use Infrangible\RetailStore\Model\Feature;
 use Infrangible\RetailStore\Model\ResourceModel\Store\CollectionFactory;
 use Infrangible\RetailStore\Model\Store;
 use Magento\Cms\Model\Block;
@@ -135,13 +136,10 @@ class Data extends AbstractHelper
 
         $retailStoreData[ 'url' ] = $retailStore->getUrl();
 
-        $featureData = [];
-
-        foreach ($retailStore->getFeatures() as $feature) {
-            $featureData[] = $feature->getData();
-        }
-
-        $retailStoreData[ 'features' ] = $featureData;
+        $retailStoreData[ 'features' ] = array_map(
+            static fn(Feature $feature): mixed => $feature->getData(),
+            array_values($retailStore->getFeatures())
+        );
 
         return $retailStoreData;
     }
@@ -171,13 +169,10 @@ class Data extends AbstractHelper
      */
     public function getRetailStoresData(array $retailStores): array
     {
-        $retailStoresData = [];
-
-        foreach ($retailStores as $retailStore) {
-            $retailStoresData[] = $this->getRetailStoreData($retailStore);
-        }
-
-        return $retailStoresData;
+        return array_map(
+            $this->getRetailStoreData(...),
+            array_values($retailStores)
+        );
     }
 
     /**
