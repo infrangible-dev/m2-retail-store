@@ -73,7 +73,7 @@ The first command creates 18 stores, the second the CMS blocks, the page `retail
 ## Requirements
 
 - Magento Open Source or Adobe Commerce 2.4.6 or newer
-- PHP 8.2 or newer
+- PHP 8.1 or newer
 - An API key of the Google Maps Platform
 
 For the Hyvä theme: [Infrangible Retail Store Hyvä](https://www.infrangible.dev/modules/retail-store-hyva). The store

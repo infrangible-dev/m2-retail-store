@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.1
+
+### Changed
+
+- Supports PHP 8.1 again, like Magento 2.4.6: the Adobe Commerce Marketplace requires modules to allow every PHP
+  version of the Magento versions they support.
+
 ## 2.0.0
 
 ### Breaking changes
